@@ -10,9 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/portfolio")
 public class PortfolioController {
 
+  private AlphaVantageClient alphaVantageClient;
+
+  PortfolioController(final AlphaVantageClient alphaVantageClient) {
+    this.alphaVantageClient = alphaVantageClient;
+  }
+
   @GetMapping("/all")
   public void getAllListings() throws FileNotFoundException {
-    AlphaVantageClient alphaVantageClient = new AlphaVantageClient();
     alphaVantageClient.getAllListings();
   }
 
