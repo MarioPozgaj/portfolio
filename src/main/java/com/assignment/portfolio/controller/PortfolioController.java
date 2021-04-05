@@ -2,8 +2,8 @@ package com.assignment.portfolio.controller;
 
 import com.assignment.portfolio.dto.ListingDto;
 import com.assignment.portfolio.dto.SearchCriteriaDto;
-import com.assignment.portfolio.dto.StockValue;
 import com.assignment.portfolio.service.PortfolioService;
+import com.assignment.portfolio.webclient.response.TimeSeriesResponse;
 import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +23,7 @@ public class PortfolioController {
   }
 
   @GetMapping
-  public List<StockValue> getPortfolio(final Authentication authentication) {
+  public List<TimeSeriesResponse> getPortfolio(final Authentication authentication) {
     return portfolioService.getUserPortfolio(authentication.getName());
   }
 

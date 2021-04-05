@@ -1,16 +1,21 @@
 package com.assignment.portfolio.webclient;
 
 import static com.assignment.portfolio.utils.CsvUtils.getListingsFromCsv;
+import static com.assignment.portfolio.utils.ResponseMapper.mapTimeSeriesResponse;
+import static java.lang.String.format;
 
-import com.assignment.portfolio.dto.Listing;
+import com.assignment.portfolio.dto.ListingDto;
+import com.assignment.portfolio.exception.RestClientException;
+import com.assignment.portfolio.webclient.response.TimeSeriesResponse;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.List;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -19,12 +24,13 @@ public class AlphaVantageClient {
   @Value("${api.key}")
   private String apiKey;
 
-  protected static final String BASE_URL = "https://www.alphavantage.co/";
-  protected static final String LISTINGS_QUERY = "query?function=LISTING_STATUS&apikey=";
+  public static final String BASE_URL = "https://www.alphavantage.co/";
+  public static final String LISTINGS_QUERY = "query?function=LISTING_STATUS&apikey=%s";
+  public static final String TIME_SERIES_QUERY = "query?function=TIME_SERIES_DAILY&symbol=%1$s&apikey=%2$s";
 
   private RestTemplate restTemplate;
 
-  AlphaVantageClient(final RestTemplate restTemplate) {
+  public AlphaVantageClient(final RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
   }
 
@@ -41,6 +47,21 @@ public class AlphaVantageClient {
     }
 
     return getListingsFromCsv(file);
+  }
+
+  public TimeSeriesResponse getStockValues(String symbol) {
+    var response = restTemplate
+        .exchange(BASE_URL + format(TIME_SERIES_QUERY, symbol, apiKey),
+            HttpMethod.GET,
+            null,
+            Map.class);
+
+    if (!response.getStatusCode().equals(HttpStatus.OK)) {
+      throw new RestClientException(format("Failed to get time series for %s", symbol));
+    }
+    var map = response.getBody();
+
+    return mapTimeSeriesResponse(map);
   }
 
 

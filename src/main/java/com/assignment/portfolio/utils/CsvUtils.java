@@ -55,7 +55,7 @@ public interface CsvUtils {
     return listing;
   }
 
-  private static LocalDate stringToDate(String stringDate) {
+  static LocalDate stringToDate(String stringDate) {
     if(StringUtils.isNotBlank(stringDate) && !StringUtils.equals(stringDate, "null")) {
       return LocalDate.parse(stringDate, FORMATTER);
     }

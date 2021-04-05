@@ -2,7 +2,7 @@ package com.assignment.portfolio.service;
 
 import com.assignment.portfolio.dto.ListingDto;
 import com.assignment.portfolio.dto.SearchCriteriaDto;
-import com.assignment.portfolio.dto.StockValue;
+import com.assignment.portfolio.webclient.response.TimeSeriesResponse;
 import java.util.List;
 
 public interface PortfolioService {
@@ -13,6 +13,6 @@ public interface PortfolioService {
 
   Boolean unsubscribeToPortfolio(String symbol, String username);
 
-  List<StockValue> getUserPortfolio(String username);
+  List<TimeSeriesResponse> getUserPortfolio(String username);
 
 }

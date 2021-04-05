@@ -11,6 +11,7 @@ public class ListingDto {
   private LocalDate ipoData;
   private LocalDate delistingDate;
   private String status;
+  private Boolean isSubscribed;
 
   public String getSymbol() {
     return symbol;
@@ -66,5 +67,13 @@ public class ListingDto {
 
   public void setStatus(String status) {
     this.status = status;
+  }
+
+  public Boolean getSubscribed() {
+    return isSubscribed;
+  }
+
+  public void setSubscribed(Boolean subscribed) {
+    isSubscribed = subscribed;
   }
 }
