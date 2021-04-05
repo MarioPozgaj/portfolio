@@ -2,7 +2,7 @@ package com.assignment.portfolio.dto;
 
 import java.time.LocalDate;
 
-public class Listing {
+public class ListingDto {
 
   private String symbol;
   private String name;

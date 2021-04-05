@@ -1,6 +1,6 @@
 package com.assignment.portfolio.utils;
 
-import com.assignment.portfolio.dto.Listing;
+import com.assignment.portfolio.dto.ListingDto;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
@@ -16,8 +16,8 @@ public interface CsvUtils {
   String NYSE = "NYSE";
   DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-  static List<Listing> getListingsFromCsv(File file) throws FileNotFoundException {
-    var listings = new ArrayList<Listing>();
+  static List<ListingDto> getListingsFromCsv(File file) throws FileNotFoundException {
+    var listings = new ArrayList<ListingDto>();
 
     try (Scanner scanner = new Scanner(file)) {
       while (scanner.hasNextLine()) {
@@ -29,7 +29,7 @@ public interface CsvUtils {
     return listings;
   }
 
-  private static Listing getRecordFromLine(String line) {
+  private static ListingDto getRecordFromLine(String line) {
     List<String> values = new ArrayList<>();
     try (Scanner rowScanner = new Scanner(line)) {
       rowScanner.useDelimiter(COMMA_DELIMITER);
@@ -43,8 +43,8 @@ public interface CsvUtils {
     return getListing(values);
   }
 
-  private static Listing getListing(List<String> values) {
-    var listing = new Listing();
+  private static ListingDto getListing(List<String> values) {
+    var listing = new ListingDto();
     listing.setSymbol(values.get(0));
     listing.setName(values.get(1));
     listing.setExchange(values.get(2));

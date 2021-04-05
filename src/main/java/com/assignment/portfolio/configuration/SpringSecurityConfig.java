@@ -13,14 +13,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     auth.inMemoryAuthentication()
         .withUser("user").password("{noop}password").roles("USER")
         .and()
-        .withUser("admin").password("{noop}password").roles("USER");
+        .withUser("user2").password("{noop}password").roles("USER");
   }
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-
     http
         .httpBasic()
+        .and()
+        .authorizeRequests()
+        .antMatchers("/**").hasRole("USER")
         .and()
         .csrf().disable()
         .formLogin().disable();
