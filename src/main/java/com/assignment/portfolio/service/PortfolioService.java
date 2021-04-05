@@ -9,9 +9,9 @@ public interface PortfolioService {
 
   List<ListingDto> findListings(SearchCriteriaDto searchCriteriaDto);
 
-  void subscribeToPortfolio(String symbol);
+  Boolean subscribeToPortfolio(String symbol, String username);
 
-  void unsubscribeToPortfolio(String symbol);
+  Boolean unsubscribeToPortfolio(String symbol, String username);
 
   List<StockValue> getUserPortfolio(String username);
 

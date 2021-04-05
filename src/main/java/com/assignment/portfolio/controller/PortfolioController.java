@@ -1,8 +1,14 @@
 package com.assignment.portfolio.controller;
 
-import com.assignment.portfolio.webclient.AlphaVantageClient;
-import java.io.FileNotFoundException;
+import com.assignment.portfolio.dto.ListingDto;
+import com.assignment.portfolio.dto.SearchCriteriaDto;
+import com.assignment.portfolio.dto.StockValue;
+import com.assignment.portfolio.service.PortfolioService;
+import java.util.List;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,15 +16,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/portfolio")
 public class PortfolioController {
 
-  private AlphaVantageClient alphaVantageClient;
+  private final PortfolioService portfolioService;
 
-  PortfolioController(final AlphaVantageClient alphaVantageClient) {
-    this.alphaVantageClient = alphaVantageClient;
+  PortfolioController(final PortfolioService portfolioService) {
+    this.portfolioService = portfolioService;
   }
 
-  @GetMapping("/all")
-  public void getAllListings() throws FileNotFoundException {
-    alphaVantageClient.getAllListings();
+  @GetMapping
+  public List<StockValue> getPortfolio(final Authentication authentication) {
+    return portfolioService.getUserPortfolio(authentication.getName());
+  }
+
+  @PutMapping("/subscribe/{symbol}")
+  public Boolean subscribe(final Authentication authentication, @PathVariable final String symbol) {
+    return portfolioService.subscribeToPortfolio(authentication.getName(), symbol);
+  }
+
+  @PutMapping("/unsubscribe/{symbol}")
+  public Boolean unsubscribe(final Authentication authentication, @PathVariable final String symbol) {
+    return portfolioService.unsubscribeToPortfolio(authentication.getName(), symbol);
+  }
+
+  @GetMapping("/listings")
+  public List<ListingDto> findListings(final SearchCriteriaDto searchCriteriaDto) {
+    return portfolioService.findListings(searchCriteriaDto);
   }
 
 }
