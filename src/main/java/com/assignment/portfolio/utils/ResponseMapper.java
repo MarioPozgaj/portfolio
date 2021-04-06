@@ -40,6 +40,8 @@ public interface ResponseMapper {
       });
     }
 
+    timeSeriesResponse.setStocks(stockUnits);
+
     return timeSeriesResponse;
   }
 

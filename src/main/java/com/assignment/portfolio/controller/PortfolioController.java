@@ -29,12 +29,12 @@ public class PortfolioController {
 
   @PutMapping("/subscribe/{symbol}")
   public Boolean subscribe(final Authentication authentication, @PathVariable final String symbol) {
-    return portfolioService.subscribeToPortfolio(authentication.getName(), symbol);
+    return portfolioService.subscribeToPortfolio(symbol, authentication.getName());
   }
 
   @PutMapping("/unsubscribe/{symbol}")
   public Boolean unsubscribe(final Authentication authentication, @PathVariable final String symbol) {
-    return portfolioService.unsubscribeToPortfolio(authentication.getName(), symbol);
+    return portfolioService.unsubscribeToPortfolio(symbol,authentication.getName());
   }
 
   @GetMapping("/listings")

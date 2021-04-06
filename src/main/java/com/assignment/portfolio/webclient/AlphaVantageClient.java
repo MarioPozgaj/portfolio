@@ -51,12 +51,9 @@ public class AlphaVantageClient {
 
   public TimeSeriesResponse getStockValues(String symbol) {
     var response = restTemplate
-        .exchange(BASE_URL + format(TIME_SERIES_QUERY, symbol, apiKey),
-            HttpMethod.GET,
-            null,
-            Map.class);
+        .getForEntity(BASE_URL + format(TIME_SERIES_QUERY, symbol, apiKey), Map.class);
 
-    if (!response.getStatusCode().equals(HttpStatus.OK)) {
+    if (!HttpStatus.OK.equals(response.getStatusCode())) {
       throw new RestClientException(format("Failed to get time series for %s", symbol));
     }
     var map = response.getBody();
