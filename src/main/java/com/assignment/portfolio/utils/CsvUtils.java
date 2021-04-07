@@ -16,7 +16,7 @@ public interface CsvUtils {
   String NYSE = "NYSE";
   DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-  static List<ListingDto> getListingsFromCsv(File file) throws FileNotFoundException {
+  static List<ListingDto> getListingsFromCsv(File file) {
     var listings = new ArrayList<ListingDto>();
 
     try (Scanner scanner = new Scanner(file)) {
@@ -25,6 +25,8 @@ public interface CsvUtils {
         if(listing != null && StringUtils.equals(listing.getExchange(), NYSE))
           listings.add(listing);
       }
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException("Failed to map listings");
     }
     return listings;
   }

@@ -41,5 +41,4 @@ public class PortfolioController {
   public List<ListingDto> findListings(final SearchCriteriaDto searchCriteriaDto) {
     return portfolioService.findListings(searchCriteriaDto);
   }
-
 }

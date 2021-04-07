@@ -8,14 +8,14 @@ import com.assignment.portfolio.dto.ListingDto;
 import com.assignment.portfolio.exception.RestClientException;
 import com.assignment.portfolio.webclient.response.TimeSeriesResponse;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -34,9 +34,10 @@ public class AlphaVantageClient {
     this.restTemplate = restTemplate;
   }
 
-  public List<Listing> getAllListings() throws FileNotFoundException {
-    File file = restTemplate
-        .execute(BASE_URL + LISTINGS_QUERY + apiKey, HttpMethod.GET, null, clientHttpResponse -> {
+  public List<ListingDto> getAllListings() {
+    File file = new File(AlphaVantageClient.class.getResource("/listing_status.csv").getFile());
+        restTemplate
+        .execute(BASE_URL + format(LISTINGS_QUERY, apiKey), HttpMethod.GET, null, clientHttpResponse -> {
           File ret = File.createTempFile("download", "tmp");
           StreamUtils.copy(clientHttpResponse.getBody(), new FileOutputStream(ret));
           return ret;
@@ -60,6 +61,4 @@ public class AlphaVantageClient {
 
     return mapTimeSeriesResponse(map);
   }
-
-
 }
