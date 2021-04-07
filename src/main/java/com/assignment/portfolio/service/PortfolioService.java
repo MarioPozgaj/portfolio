@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface PortfolioService {
 
-  List<ListingDto> findListings(SearchCriteriaDto searchCriteriaDto);
+  void getListings();
+
+  List<ListingDto> findListings(SearchCriteriaDto searchCriteriaDto, String username);
 
   Boolean subscribeToPortfolio(String symbol, String username);
 

@@ -7,11 +7,16 @@ import static com.assignment.portfolio.webclient.AlphaVantageClientTest.getFileA
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+import com.assignment.portfolio.dto.FilterAndSortingDto;
+import com.assignment.portfolio.dto.FilterAndSortingDto.Direction;
+import com.assignment.portfolio.dto.PaginationDto;
+import com.assignment.portfolio.dto.SearchCriteriaDto;
 import com.assignment.portfolio.service.impl.PortfolioServiceImpl;
 import java.io.IOException;
 import java.net.URI;
@@ -50,8 +55,8 @@ public class PortfolioServiceTest {
   private static int setupCounter = 0;
 
   @BeforeEach
-  public void startServer() throws IOException, URISyntaxException {
-    mockServer = MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build();//.createServer(restTemplate);
+  public void setup() throws IOException, URISyntaxException {
+    mockServer = MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build();
 
     if(setupCounter == 0) {
       setupCounter++;
@@ -74,8 +79,8 @@ public class PortfolioServiceTest {
 
     portfolioService.getUserPortfolio(USER);
     verifyAndResetMockServer();
+    assertTrue(portfolioService.unsubscribeToPortfolio(IBM, USER));
   }
-
 
   @Test
   public void subscribeTest() throws Exception {
@@ -117,6 +122,101 @@ public class PortfolioServiceTest {
     assertTrue(portfolioService.unsubscribeToPortfolio(IBM, USER));
     assertTrue(portfolioService.unsubscribeToPortfolio(AA, USER));
     assertTrue(portfolioService.unsubscribeToPortfolio(IBM, USER_2));
+  }
+
+  @Test
+  public void findListingsDefaultTest() {
+    var searchCriteria = new SearchCriteriaDto();
+    searchCriteria.setPaginationDto(new PaginationDto());
+    searchCriteria.setFilterAndSortingDto(new FilterAndSortingDto());
+    var listings = portfolioService.findListings(searchCriteria, USER);
+    assertNotNull(listings);
+    assertFalse(listings.isEmpty());
+    assertEquals(20, listings.size());
+    assertEquals("A", listings.get(0).getSymbol());
+  }
+
+  @Test
+  public void findListingsLast10Test() {
+    var searchCriteria = new SearchCriteriaDto();
+    var pagination = new PaginationDto();
+    pagination.setSize(10);
+    searchCriteria.setPaginationDto(pagination);
+    var filterAndSorting = new FilterAndSortingDto();
+    filterAndSorting.setSortingField("symbol");
+    filterAndSorting.setSortDirection(Direction.DESC);
+    searchCriteria.setFilterAndSortingDto(filterAndSorting);
+    var listings = portfolioService.findListings(searchCriteria, USER);
+    assertNotNull(listings);
+    assertFalse(listings.isEmpty());
+    assertEquals(10, listings.size());
+    assertEquals("ZYME", listings.get(0).getSymbol());
+  }
+
+  @Test
+  public void findListingsDefaultWithSubscriptionTest() throws Exception {
+    var searchCriteria = new SearchCriteriaDto();
+    searchCriteria.setPaginationDto(new PaginationDto());
+    searchCriteria.setFilterAndSortingDto(new FilterAndSortingDto());
+    var url = BASE_URL + format(TIME_SERIES_QUERY, IBM,  apiKey);
+    var jsonResponse = getFileAsString("/AA_TIME_SERIES.json");
+    mockSetup(url, jsonResponse);
+    assertTrue(portfolioService.subscribeToPortfolio(AA, USER));
+    var listings = portfolioService.findListings(searchCriteria, USER);
+    assertNotNull(listings);
+    assertFalse(listings.isEmpty());
+    assertEquals(20, listings.size());
+    assertEquals("A", listings.get(0).getSymbol());
+    assertFalse(listings.get(0).getSubscribed());
+    assertTrue(listings.get(1).getSubscribed());
+  }
+
+  @Test
+  public void filterListingsBySymbolTest() {
+    var searchCriteria = new SearchCriteriaDto();
+    searchCriteria.setPaginationDto(new PaginationDto());
+    var filterAndSortingDto = new FilterAndSortingDto();
+    filterAndSortingDto.setFilterValue("AAC");
+    searchCriteria.setFilterAndSortingDto(filterAndSortingDto);
+    var listings = portfolioService.findListings(searchCriteria, USER);
+    assertNotNull(listings);
+    assertFalse(listings.isEmpty());
+    assertEquals(3, listings.size());
+    assertEquals("AAC", listings.get(0).getSymbol());
+    assertEquals("AAC-U", listings.get(1).getSymbol());
+    assertEquals("AAC-WS", listings.get(2).getSymbol());
+  }
+
+  @Test
+  public void filterListingsBySymbolDescending() {
+    var searchCriteria = new SearchCriteriaDto();
+    searchCriteria.setPaginationDto(new PaginationDto());
+    var filterAndSortingDto = new FilterAndSortingDto();
+    filterAndSortingDto.setFilterValue("AAC");
+    filterAndSortingDto.setSortDirection(Direction.DESC);
+    searchCriteria.setFilterAndSortingDto(filterAndSortingDto);
+    var listings = portfolioService.findListings(searchCriteria, USER);
+    assertNotNull(listings);
+    assertFalse(listings.isEmpty());
+    assertEquals(3, listings.size());
+    assertEquals("AAC-WS", listings.get(0).getSymbol());
+    assertEquals("AAC-U", listings.get(1).getSymbol());
+    assertEquals("AAC", listings.get(2).getSymbol());
+  }
+
+  @Test
+  public void filterListingsByNameTest() {
+    var searchCriteria = new SearchCriteriaDto();
+    searchCriteria.setPaginationDto(new PaginationDto());
+    var filterAndSortingDto = new FilterAndSortingDto();
+    filterAndSortingDto.setFilterField("name");
+    filterAndSortingDto.setFilterValue("Ares Acquisition Corporation - Class A");
+    searchCriteria.setFilterAndSortingDto(filterAndSortingDto);
+    var listings = portfolioService.findListings(searchCriteria, USER);
+    assertNotNull(listings);
+    assertFalse(listings.isEmpty());
+    assertEquals(1, listings.size());
+    assertEquals("AAC", listings.get(0).getSymbol());
   }
 
   public void mockSetup(final String url, final String jsonResponse)

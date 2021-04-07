@@ -2,9 +2,9 @@ package com.assignment.portfolio.dto;
 
 public class FilterAndSortingDto {
 
-  private String sortingField = "name";
+  private String sortingField = "symbol";
   private Direction sortDirection = Direction.ASC;
-  private String filterField = "name";
+  private String filterField = "symbol";
   private String filterValue;
 
   public String getSortingField() {

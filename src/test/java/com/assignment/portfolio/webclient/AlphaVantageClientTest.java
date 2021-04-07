@@ -64,6 +64,7 @@ public class AlphaVantageClientTest {
     assertFalse(listings.isEmpty());
     assertTrue(listings.size() == 3692);
     listings.forEach(listing -> assertEquals("NYSE", listing.getExchange()));
+    verifyAndResetMockServer();
   }
 
   @Test
@@ -77,6 +78,7 @@ public class AlphaVantageClientTest {
         );
 
     assertThrows(RuntimeException.class, () -> alphaVantageClient.getAllListings());
+    verifyAndResetMockServer();
   }
 
   @Test
@@ -92,6 +94,8 @@ public class AlphaVantageClientTest {
     assertEquals(LocalDate.of(2021, 4, 1), ibmStock.getMetaData().getLastRefreshed());
     assertEquals("Compact", ibmStock.getMetaData().getOutputSize());
     assertEquals("US/Eastern", ibmStock.getMetaData().getTimeZone());
+
+    verifyAndResetMockServer();
   }
 
   public static String getFileAsString(final String filePath) throws IOException {
@@ -111,5 +115,10 @@ public class AlphaVantageClientTest {
     mockServer.expect(ExpectedCount.manyTimes(), requestTo(new URI(url)))
         .andExpect(method(HttpMethod.GET))
         .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
+  }
+
+  private void verifyAndResetMockServer() {
+    mockServer.verify();
+    mockServer.reset();
   }
 }

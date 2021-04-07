@@ -12,6 +12,16 @@ public class PaginationDto {
   @Max(200)
   private Integer size = 20;
 
+  public PaginationDto() {
+
+  }
+
+  public PaginationDto(@Min(0) Integer page,
+      @Min(0) @Max(200) Integer size) {
+    this.page = page;
+    this.size = size;
+  }
+
   public Integer getPage() {
     return page;
   }

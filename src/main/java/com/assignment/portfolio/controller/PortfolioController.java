@@ -8,7 +8,9 @@ import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,11 +36,14 @@ public class PortfolioController {
 
   @PutMapping("/unsubscribe/{symbol}")
   public Boolean unsubscribe(final Authentication authentication, @PathVariable final String symbol) {
-    return portfolioService.unsubscribeToPortfolio(symbol,authentication.getName());
+    return portfolioService.unsubscribeToPortfolio(symbol, authentication.getName());
   }
 
-  @GetMapping("/listings")
-  public List<ListingDto> findListings(final SearchCriteriaDto searchCriteriaDto) {
-    return portfolioService.findListings(searchCriteriaDto);
+  @PostMapping("/listings/search")
+  public List<ListingDto> findListings(final Authentication authentication, @RequestBody SearchCriteriaDto searchCriteriaDto) {
+    if(searchCriteriaDto == null) {
+      searchCriteriaDto = new SearchCriteriaDto();
+    }
+    return portfolioService.findListings(searchCriteriaDto, authentication.getName());
   }
 }
