@@ -35,8 +35,7 @@ public class AlphaVantageClient {
   }
 
   public List<ListingDto> getAllListings() {
-    File file = new File(AlphaVantageClient.class.getResource("/listing_status.csv").getFile());
-        restTemplate
+    File file = restTemplate
         .execute(BASE_URL + format(LISTINGS_QUERY, apiKey), HttpMethod.GET, null, clientHttpResponse -> {
           File ret = File.createTempFile("download", "tmp");
           StreamUtils.copy(clientHttpResponse.getBody(), new FileOutputStream(ret));

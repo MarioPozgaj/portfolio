@@ -93,24 +93,16 @@ public class PaginationUtilsTest {
   }
 
   @Test
+  public void test_case_13() {
+    var result = getPageIndex(3, new PaginationDto(1, 20));
+    assertEquals(0, result[0]);
+    assertEquals(3, result[1]);
+  }
+
+  @Test
   public void test_case_nullPaginationDto() {
     var result = getPageIndex(200, null);
     assertEquals(0, result[0]);
     assertEquals(20, result[1]);
-  }
-
-  @Test
-  public void test_case_nullValuesInPaginationDto() {
-    var result = getPageIndex(200, new PaginationDto(null, null));
-    assertEquals(0, result[0]);
-    assertEquals(20, result[1]);
-
-    result = getPageIndex(200, new PaginationDto(1, null));
-    assertEquals(20, result[0]);
-    assertEquals(40, result[1]);
-
-    result = getPageIndex(200, new PaginationDto(null, 50));
-    assertEquals(0, result[0]);
-    assertEquals(50, result[1]);
   }
 }

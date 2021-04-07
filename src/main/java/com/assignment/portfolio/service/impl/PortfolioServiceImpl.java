@@ -104,12 +104,15 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
     var index = getPageIndex(filteredAndPaginatedListings.size(), pagination);
     var list = filteredAndPaginatedListings.subList(index[0], index[1]);
-
     var subscriptions = userSubscriptions.get(username);
 
-    if(ObjectUtils.isNotEmpty(subscriptions)) {
-      list.forEach(listing -> listing.setSubscribed(subscriptions.contains(listing.getSymbol())));
-    }
+    list.forEach(listing -> {
+      if (ObjectUtils.isNotEmpty(subscriptions)) {
+        listing.setSubscribed(subscriptions.contains(listing.getSymbol()));
+      } else {
+        listing.setSubscribed(false);
+      }
+    });
 
     return list;
   }

@@ -8,12 +8,12 @@ public interface PaginationUtils {
     if(paginationDto == null) {
       paginationDto = new PaginationDto();
     }
-    var size = paginationDto.getSize() == null ? 20 : paginationDto.getSize();
-    var page = paginationDto.getPage() == null || paginationDto.getPage() < 0
-        ? 0 : paginationDto.getPage();
+    var size = paginationDto.getSize();
+    var page = Math.max(paginationDto.getPage(), 0);
 
     if ((size * page) > maxItems) {
-      return new Integer[]{maxItems - size, maxItems};
+      var lowePageIndex = maxItems - size;
+      return new Integer[]{Math.max(lowePageIndex, 0), maxItems};
     }
 
     if (page == 0 && size < maxItems) {

@@ -44,6 +44,7 @@ public class PortfolioController {
     if(searchCriteriaDto == null) {
       searchCriteriaDto = new SearchCriteriaDto();
     }
+    searchCriteriaDto.getPaginationDto().validateAndCorrect();
     return portfolioService.findListings(searchCriteriaDto, authentication.getName());
   }
 }

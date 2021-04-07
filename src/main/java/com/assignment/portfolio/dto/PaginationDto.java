@@ -1,40 +1,45 @@
 package com.assignment.portfolio.dto;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-
 public class PaginationDto {
 
-  @Min(0)
-  private Integer page = 0;
-
-  @Min(0)
-  @Max(200)
-  private Integer size = 20;
+  private int page = 0;
+  private int size = 20;
 
   public PaginationDto() {
 
   }
 
-  public PaginationDto(@Min(0) Integer page,
-      @Min(0) @Max(200) Integer size) {
+  public PaginationDto(int page, int size) {
     this.page = page;
     this.size = size;
   }
 
-  public Integer getPage() {
+  public int getPage() {
     return page;
   }
 
-  public void setPage(Integer page) {
+  public void setPage(int page) {
     this.page = page;
   }
 
-  public Integer getSize() {
+  public int getSize() {
     return size;
   }
 
-  public void setSize(Integer size) {
+  public void setSize(int size) {
     this.size = size;
+  }
+
+  public void validateAndCorrect() {
+    if(page < 0) {
+      this.page = 0;
+    }
+
+    if(size > 200) {
+      this.size = 200;
+    }
+    if(size < 0) {
+      this.size = 0;
+    }
   }
 }
