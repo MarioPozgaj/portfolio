@@ -1,6 +1,6 @@
 package com.assignment.portfolio.controller;
 
-import com.assignment.portfolio.dto.ListingDto;
+import com.assignment.portfolio.dto.FindListingsResultDto;
 import com.assignment.portfolio.dto.SearchCriteriaDto;
 import com.assignment.portfolio.service.PortfolioService;
 import com.assignment.portfolio.webclient.response.TimeSeriesResponse;
@@ -40,7 +40,7 @@ public class PortfolioController {
   }
 
   @PostMapping("/listings/search")
-  public List<ListingDto> findListings(final Authentication authentication, @RequestBody SearchCriteriaDto searchCriteriaDto) {
+  public FindListingsResultDto findListings(final Authentication authentication, @RequestBody SearchCriteriaDto searchCriteriaDto) {
     if(searchCriteriaDto == null) {
       searchCriteriaDto = new SearchCriteriaDto();
     }

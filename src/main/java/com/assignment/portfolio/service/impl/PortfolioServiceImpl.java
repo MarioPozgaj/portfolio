@@ -4,6 +4,7 @@ import static com.assignment.portfolio.utils.PaginationUtils.getPageIndex;
 
 import com.assignment.portfolio.dto.FilterAndSortingDto;
 import com.assignment.portfolio.dto.FilterAndSortingDto.Direction;
+import com.assignment.portfolio.dto.FindListingsResultDto;
 import com.assignment.portfolio.dto.ListingDto;
 import com.assignment.portfolio.dto.PaginationDto;
 import com.assignment.portfolio.dto.SearchCriteriaDto;
@@ -40,7 +41,7 @@ public class PortfolioServiceImpl implements PortfolioService {
   }
 
   @Override
-  public List<ListingDto> findListings(final SearchCriteriaDto searchCriteriaDto, final String username) {
+  public FindListingsResultDto findListings(final SearchCriteriaDto searchCriteriaDto, final String username) {
     checkIfListingsExist();
 
     var pagination = searchCriteriaDto.getPaginationDto();
@@ -102,11 +103,13 @@ public class PortfolioServiceImpl implements PortfolioService {
     if (filteredAndPaginatedListings == null) {
       filteredAndPaginatedListings.addAll(listings);
     }
+
+    var totalItems = filteredAndPaginatedListings.size();
     var index = getPageIndex(filteredAndPaginatedListings.size(), pagination);
-    var list = filteredAndPaginatedListings.subList(index[0], index[1]);
+    var paginatedListings = filteredAndPaginatedListings.subList(index[0], index[1]);
     var subscriptions = userSubscriptions.get(username);
 
-    list.forEach(listing -> {
+    paginatedListings.forEach(listing -> {
       if (ObjectUtils.isNotEmpty(subscriptions)) {
         listing.setSubscribed(subscriptions.contains(listing.getSymbol()));
       } else {
@@ -114,7 +117,7 @@ public class PortfolioServiceImpl implements PortfolioService {
       }
     });
 
-    return list;
+    return new FindListingsResultDto(paginatedListings, totalItems);
   }
 
   @Override
