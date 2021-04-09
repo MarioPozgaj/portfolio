@@ -58,6 +58,9 @@ public interface CsvUtils {
   }
 
   static LocalDate stringToDate(String stringDate) {
+    if(stringDate.length() > 10) {
+      stringDate = stringDate.substring(0, 10);
+    }
     if(StringUtils.isNotBlank(stringDate) && !StringUtils.equals(stringDate, "null")) {
       return LocalDate.parse(stringDate, FORMATTER);
     }
